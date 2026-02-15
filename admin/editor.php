@@ -287,16 +287,17 @@ if (!empty($cover)) {
         document.getElementById('editor-core').appendChild(container);
     }
 
-    function addGridBlock(num) {
-        var container = document.createElement('div');
-        container.className = 'block-container';
-        var colsHtml = '';
-        for(var i=0; i < num; i++) {
-            colsHtml += '<div class="col-item" contenteditable="true" onfocus="setTarget(\'grid\', this)">' + LOREM_TEXT + '</div>';
-        }
-        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="grid-wrapper" style="display:grid; grid-template-columns:repeat('+num+', 1fr); gap:20px;">' + colsHtml + '</div>';
-        document.getElementById('editor-core').appendChild(container);
+function addGridBlock(num) {
+    var container = document.createElement('div');
+    container.className = 'block-container';
+    var colsHtml = '';
+    for(var i=0; i < num; i++) {
+        colsHtml += '<div class="col-item" contenteditable="true" onfocus="setTarget(\'grid\', this)">' + LOREM_TEXT + '</div>';
     }
+    // On utilise une classe dynamique (cols-2 ou cols-3) au lieu du style inline
+    container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="grid-wrapper cols-' + num + '">' + colsHtml + '</div>';
+    document.getElementById('editor-core').appendChild(container);
+}
 
 
 
