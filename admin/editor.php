@@ -159,6 +159,20 @@ if (!empty($cover)) {
                 <input type="range" id="slider-size" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <span class="section-label">DISPOSITION (FLOAT)</span>
             <div class="row-float">
                 <button class="tool-btn" onclick="addFloatBlock('left')" title="Aligner à gauche">
@@ -182,6 +196,24 @@ if (!empty($cover)) {
                     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="2" fill="currentColor"/><rect width="9" y="4" height="2" fill="currentColor"/><rect y="8" width="20" height="2" fill="currentColor"/><rect y="12" width="20" height="2" fill="currentColor"/><rect x="11" y="8" width="9" height="6" fill="currentColor" stroke="black" stroke-width="1"/></svg>
                 </button>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <span class="section-label">JUSTIFICATION TEXTE</span>
             <div class="row-justify" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
@@ -368,21 +400,26 @@ function handleCoverChange(input) {
 
 
 
-    function addFloatBlock(type) {
-        var container = document.createElement('div');
-        container.className = 'block-container';
-        var style = (type === 'left') ? "float:left; margin:0 20px 10px 0; width:40%;" : (type === 'right') ? "float:right; margin:0 0 10px 20px; width:40%;" : "width:100%; margin-bottom:20px; clear:both;";
-        
-        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div>' +
+function addFloatBlock(type) {
+    var container = document.createElement('div');
+    container.className = 'block-container';
+    
+    // On ne calcule plus de variable "style". 
+    // On applique simplement la classe block-float ET le type (left, right, bottom-left, etc.)
+    container.innerHTML = 
+        '<div class="delete-block" onclick="this.parentElement.remove()">✕</div>' +
+        '<div class="block-float ' + type + '">' +
             '<div class="image-placeholder" ' +
-            'onclick="setTarget(\'img\', this)" ' +
-            'ondblclick="document.getElementById(\'inp-block-img\').click();" ' + 
-            'style="' + style + ' background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">' +
-            'IMAGE</div>' +
-            '<p contenteditable="true" onfocus="setTarget(\'p\', this)">' + LOREM_TEXT + '</p>';
-        
-        document.getElementById('editor-core').appendChild(container);
-    }
+                'onclick="setTarget(\'img\', this)" ' +
+                'ondblclick="document.getElementById(\'inp-block-img\').click();" ' + 
+                'style="background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">' +
+                'IMAGE' +
+            '</div>' +
+            '<p contenteditable="true" onfocus="setTarget(\'p\', this)">' + LOREM_TEXT + '</p>' +
+        '</div>';
+    
+    document.getElementById('editor-core').appendChild(container);
+}
 
 
 

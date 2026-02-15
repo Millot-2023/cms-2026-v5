@@ -846,7 +846,6 @@ body.sidebar-hidden .sidebar-trigger {
 }
 .grid-wrapper {
   /* --- MODE COLONNES (Article final ET Éditeur large) --- */
-  /* On active le flex si l'écran est large OU si le conteneur est large */
 }
 @media (min-width: 768px) {
   .grid-wrapper {
@@ -863,13 +862,21 @@ body.sidebar-hidden .sidebar-trigger {
     -webkit-box-flex: 1;
         -ms-flex: 1;
             flex: 1;
-    width: 0;
+    width: auto;
+    min-width: 0;
     margin-bottom: 0;
+  }
+  .grid-wrapper.cols-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-wrapper.cols-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 .grid-wrapper {
   /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
-  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
 }
 .paper.mobile-view .grid-wrapper {
   display: block;
@@ -879,62 +886,53 @@ body.sidebar-hidden .sidebar-trigger {
   margin-bottom: 20px;
 }
 
-/* 1. Base du papier */
-.paper {
-  width: 95%;
-  max-width: 850px;
+/* --- LOGIQUE UNIVERSELLE DES BLOCS FLOATS --- */
+/* Activation du container sur l'éditeur (.paper) et la publication (.article-render) */
+.paper, .article-render, .single-article {
   container-type: inline-size;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  overflow-x: hidden;
+  container-name: article-container;
 }
 
-/* 2. Gestion des colonnes */
-.grid-wrapper {
+/* Par défaut : Mode Mobile (Empilé, 100%) */
+.block-float {
   display: block;
   width: 100%;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  float: none;
+  margin-bottom: 2rem;
+  clear: both;
 }
-.grid-wrapper .col-item {
+.block-float .image-placeholder {
   width: 100%;
-  margin-bottom: 20px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  margin-bottom: 1rem;
 }
-.grid-wrapper {
-  /* --- MODE COLONNES (Article final ET Éditeur large) --- */
-  /* On active le flex si l'écran est large OU si le conteneur est large */
+.block-float {
+  /* Activation du flottement au dessus de 600px de large */
 }
-@media (min-width: 768px) {
-  .grid-wrapper {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    gap: 20px;
+@container article-container (min-width: 600px) {
+  .block-float.left .image-placeholder, .block-float.bottom-left .image-placeholder {
+    float: left;
+    width: 45%;
+    margin-right: 2rem;
+    margin-bottom: 1rem;
   }
-  .grid-wrapper .col-item {
-    -webkit-box-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
-    width: 0;
-    margin-bottom: 0;
+  .block-float.right .image-placeholder, .block-float.bottom-right .image-placeholder {
+    float: right;
+    width: 45%;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+  }
+  .block-float.full .image-placeholder, .block-float.bottom-full .image-placeholder {
+    float: none;
+    width: 100%;
   }
 }
-.grid-wrapper {
-  /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
-  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
+.block-float {
+  /* Nettoyage du flux */
 }
-.paper.mobile-view .grid-wrapper {
-  display: block;
-}
-.paper.mobile-view .grid-wrapper .col-item {
-  width: 100%;
-  margin-bottom: 20px;
+.block-float::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 /* ==========================================================================

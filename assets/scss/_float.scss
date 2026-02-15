@@ -1,0 +1,57 @@
+/* --- LOGIQUE UNIVERSELLE DES BLOCS FLOATS --- */
+
+/* Activation du container sur l'éditeur (.paper) et la publication (.article-render) */
+.paper, .article-render, .single-article {
+    container-type: inline-size;
+    container-name: article-container;
+}
+
+/* Par défaut : Mode Mobile (Empilé, 100%) */
+.block-float {
+    display: block;
+    width: 100%;
+    float: none;
+    margin-bottom: 2rem;
+    clear: both;
+
+    .image-placeholder {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    /* Activation du flottement au dessus de 600px de large */
+    @container article-container (min-width: 600px) {
+        
+        &.left, &.bottom-left {
+            .image-placeholder {
+                float: left;
+                width: 45%;
+                margin-right: 2rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        &.right, &.bottom-right {
+            .image-placeholder {
+                float: right;
+                width: 45%;
+                margin-left: 2rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        &.full, &.bottom-full {
+            .image-placeholder {
+                float: none;
+                width: 100%;
+            }
+        }
+    }
+
+    /* Nettoyage du flux */
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}

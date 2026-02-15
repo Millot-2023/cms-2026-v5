@@ -6,20 +6,21 @@
 @use "variables" as *;
 @use "reset";
 @use "fonts";
-@use "bases"; // Ajout de bases pour tes polices et couleurs de fond
+@use "bases"; 
 
 @use "editor";
 @use "editor_ui";
 @use "columns";
+@use "float";      // <--- PLACE ICI : Après les colonnes, avant les composants
 //@use "editor-styles";
+
 // 2. STRUCTURE GLOBALE
 @use "grid";
- 
 
 // 3. COMPOSANTS
 @use "header";
 @use "hero";
-@use "cards";    // <--- INDISPENSABLE : Ton effet hover est ici !
+@use "cards"; 
 @use "article";
 @use "evolution";
 @use "footer";
