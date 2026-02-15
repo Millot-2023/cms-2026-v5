@@ -66,30 +66,49 @@ const studio = {
         }
     },
     
-    addBlock(tag) {
-        const target = this.canvas.getElementById('editable-core');
-        if (!target) return;
 
-        const block = this.canvas.createElement(tag === 'image' ? 'div' : tag);
-        
-        if (tag === 'image') {
-            // Modification : On crée un conteneur d'image cliquable pour déclencher l'upload
-            block.className = "image-block-wrapper";
-            block.innerHTML = `<img src="../assets/img/image-template.png" 
-                                    onclick="window.parent.document.getElementById('inp-cover').click(); window.parent.studio.setCurrentImgTarget(this);" 
-                                    style="width:100%; border-radius:8px; margin:20px 0; cursor:pointer;">`;
-        } else if (tag === 'p') {
-            block.innerText = "Nouveau paragraphe éditable...";
-        } else {
-            block.innerText = "Nouveau titre " + tag.toUpperCase();
-        }
 
-        block.setAttribute('contenteditable', 'true');
-        target.appendChild(block);
-        
-        setTimeout(() => block.focus(), 10);
-        block.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    },
+
+
+addBlock(tag) {
+    const target = this.canvas.getElementById('editable-core');
+    if (!target) return;
+
+    const block = this.canvas.createElement(tag === 'image' ? 'div' : tag);
+    
+    if (tag === 'image') {
+        block.className = "image-block-wrapper";
+        // On utilise explicitement triggerContentImage pour les blocs ajoutés
+        block.innerHTML = `<img src="../assets/img/image-template.png" 
+                            onclick="window.parent.studio.triggerContentImage(this);" 
+                            style="width:100%; border-radius:8px; margin:20px 0; cursor:pointer;">`;
+    } else if (tag === 'p') {
+        block.innerText = "Nouveau paragraphe éditable...";
+    } else {
+        block.innerText = "Nouveau titre " + tag.toUpperCase();
+    }
+
+    block.setAttribute('contenteditable', 'true');
+    target.appendChild(block);
+    
+    setTimeout(() => block.focus(), 10);
+    block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+},
+
+// Cette méthode doit être unique pour le contenu interne
+triggerContentImage(imgEl) {
+    this.lastImgSelected = imgEl; // Capture la cible précise (Viewer ou Float)
+    const input = window.parent.document.getElementById('inp-block-img');
+    if (input) input.click();
+},
+
+
+
+
+
+
+
+
 
     // Stocke temporairement l'image en cours de modification
     setCurrentImgTarget(imgEl) {

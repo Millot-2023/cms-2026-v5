@@ -128,6 +128,7 @@ if (!empty($cover)) {
 
             <button class="tool-btn" style="height:30px; font-size:9px;" onclick="document.getElementById('inp-cover').click()">Changer l'image</button>
             <input type="file" id="inp-cover" style="display:none;" onchange="handleCoverChange(this)">
+<input type="file" id="inp-block-img" style="display:none;" onchange="handleCoverChange(this)">
 
             <span class="section-label">MÉTADONNÉES</span>
             <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
@@ -302,34 +303,35 @@ if (!empty($cover)) {
 
     // --- CORRECTION : UPLOAD PHYSIQUE ---
 function handleCoverChange(input) {
-        const file = input.files[0];
-        if (!file) return;
+    const file = input.files[0];
+    if (!file) return;
 
-        const formData = new FormData();
-        formData.append('action', 'upload_image');
-        formData.append('slug', currentSlug);
-        formData.append('image', file);
+    const formData = new FormData();
+    formData.append('action', 'upload_image');
+    formData.append('slug', currentSlug);
+    formData.append('image', file);
 
-        fetch('save.php', { method: 'POST', body: formData })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                const displayUrl = '../' + data.url; 
+    fetch('save.php', { method: 'POST', body: formData })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const displayUrl = '../' + data.url; 
 
-                if (currentTag === 'img' && currentImageElement) {
-                    // On met le chemin relatif à l'admin pour l'affichage immédiat
-                    currentImageElement.innerHTML = `<img src="${displayUrl}" style="width:100%; height:100%; object-fit:cover;">`;
-                    currentImageElement.style.background = "transparent";
-                } else {
-                    coverData = data.fileName; 
-                    const imgPreview = document.getElementById('img-cover-preview');
-                    if (imgPreview) imgPreview.src = displayUrl;
-                }
+            // Si l'appel vient de l'input des blocs OU si un tag img est actif
+            if (input.id === 'inp-block-img' || (currentTag === 'img' && currentImageElement)) {
+                currentImageElement.innerHTML = `<img src="${displayUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+                currentImageElement.style.background = "transparent";
             } else {
-                alert("Erreur upload : " + data.message);
+                // Sinon, c'est la cover réelle du projet (le dashboard)
+                coverData = data.fileName; 
+                const imgPreview = document.getElementById('img-cover-preview');
+                if (imgPreview) imgPreview.src = displayUrl;
             }
-        });
-    }
+        } else {
+            alert("Erreur upload : " + data.message);
+        }
+    });
+}
 
     function publishProject() {
         const btn = document.getElementById('btn-publish-trigger');
@@ -373,13 +375,20 @@ function handleCoverChange(input) {
         container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div>' +
             '<div class="image-placeholder" ' +
             'onclick="setTarget(\'img\', this)" ' +
-            'ondblclick="document.getElementById(\'inp-cover\').click();" ' + 
+            'ondblclick="document.getElementById(\'inp-block-img\').click();" ' + 
             'style="' + style + ' background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">' +
             'IMAGE</div>' +
             '<p contenteditable="true" onfocus="setTarget(\'p\', this)">' + LOREM_TEXT + '</p>';
         
         document.getElementById('editor-core').appendChild(container);
     }
+
+
+
+
+
+
+
 
     function resizePaper(width) {
         var paper = document.getElementById('paper');
