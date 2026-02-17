@@ -289,9 +289,9 @@ if (!empty($cover)) {
         var dynStyle = document.getElementById('dynamic-styles');
         if(!dynStyle) return;
         var css = ".paper { padding-top: 40px; }\n"; 
-        css += ".has-lettrine::first-letter { float: left; font-size: 3.5rem; line-height: 1; margin-right: 12px; font-weight: 900; display: block; padding: 4px; font-family: serif; }\n";
+        css += ".has-lettrine::first-letter {float: left; font-size: 3.5rem; margin-right: 12px; font-weight: 900; display: block; padding: 4px; font-family: serif; }\n";
         for (var tag in designSystem) {
-            css += ".paper " + tag + " { font-size: " + designSystem[tag].fontSize + "; line-height: 1.1; margin-bottom: 1.5em; }\n";
+            css += ".paper " + tag + " { font-size: " + designSystem[tag].fontSize + "; margin-bottom: 1.5em; }\n";
         }
         dynStyle.innerHTML = css;
     }

@@ -81,6 +81,9 @@ article.grid-block, .grid-block {
             text-overflow: ellipsis !important;
             display: block !important;
         }
-        p { color: #666 !important; font-size: 0.9rem; line-height: 1.4; }
+        p { color: #666 !important;
+            font-size: 0.9rem;
+            line-height: $line-height-base;
+        }
     }
 }

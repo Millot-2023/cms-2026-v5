@@ -17,6 +17,10 @@
         width: 100%;
         margin-bottom: 20px;
         box-sizing: border-box;
+
+
+
+
     }
 
     /* --- MODE COLONNES (Article final ET Éditeur large) --- */
@@ -30,6 +34,12 @@
             width: auto;      // On supprime le 0 qui cassait tout
             min-width: 0;     // Sécurité flux texte
             margin-bottom: 0;
+        p {
+            font-size: 0.9rem; // Plus petit car la colonne est étroite
+            line-height: 1.5;  // On resserre un poil l'interligne pour l'esthétique
+            }
+
+
         }
 
         // Si tu veux quand même utiliser grid pour la précision :
