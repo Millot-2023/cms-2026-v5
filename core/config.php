@@ -15,7 +15,7 @@ $root_folder = preg_replace('#/(core|admin|includes).*$#i', '', $script_path);
 $root_folder = rtrim($root_folder, '/') . '/';
 
 // 3. Définition des constantes
-define('SITE_NAME', 'CMS-2026 v4.0'); // Mis à jour en v4.0
+define('SITE_NAME', 'CMS-2026 v5.0'); // Mis à jour en v4.0
 define('BASE_URL', $protocol . $host . $root_folder); 
 define('ASSETS_URL', BASE_URL . 'assets/');
 define('INC_PATH', __DIR__ . '/../includes/');
