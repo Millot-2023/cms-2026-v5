@@ -53,101 +53,67 @@ function exportForGmail() {
         el.style.display = "block";
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 5. STRUCTURE DES COLONNES (VERSION BLOCS FLUIDES)
+    // 5. STRUCTURE DES COLONNES
     temp.querySelectorAll('.grid-wrapper').forEach(grid => {
         const cols = grid.querySelectorAll('.col-item');
         if (cols.length === 0) return;
+        const widthPerCol = (100 / cols.length).toFixed(2);
 
-        let blocksHTML = '';
-        
+        let tableHTML = `<table width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;"><tr>`;
         cols.forEach(col => {
-            // On utilise des div inline-block avec un min-width
-            // Si l'écran est plus petit que 250px, le bloc suivant saute à la ligne
-            blocksHTML += `
-                <div style="display: inline-block; width: 250px; min-width: 240px; vertical-align: top; margin-bottom: 20px; text-align: left;">
-                    <div style="padding: 0 15px; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif; line-height: 1.6;">
-                        ${col.innerHTML}
-                    </div>
-                </div>`;
+            tableHTML += `
+                <td width="${widthPerCol}%" valign="top" style="width:${widthPerCol}%; padding:0 15px; vertical-align:top; text-align:left; line-height: 1.6; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif;">
+                    ${col.innerHTML}
+                </td>`;
         });
-        
-        // Le text-align: center sur le parent aide à équilibrer sur mobile
-        grid.innerHTML = `<div style="width: 100%; text-align: center; font-size: 0;">${blocksHTML}</div>`;
+        tableHTML += `</tr></table>`;
+        grid.innerHTML = tableHTML;
         grid.style.marginBottom = "20px";
     });
 
+    // 6. FIX IMAGES : URL ABSOLUES + ALIGNEMENT
+    // On récupère l'URL racine de ton projet (ex: http://localhost/cms-2026-v5/)
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 6. FLOAT DES IMAGES (RESPONSIVE FORCÉ)
-    temp.querySelectorAll('.block-float img').forEach((img, i) => {
-        img.className = "mobile-img";
-        img.style.maxWidth = "200px"; 
-        img.style.height = "auto";
-        img.style.display = "inline";
-        if (imgData[i] === 'left') {
-            img.style.float = "left";
-            img.style.marginRight = "20px";
-        } else if (imgData[i] === 'right') {
-            img.style.float = "right";
-            img.style.marginLeft = "20px";
+    temp.querySelectorAll('img').forEach((img, i) => {
+        // Transformation de l'URL pour Gmail
+        if (!img.src.startsWith('http')) {
+            const currentSrc = img.getAttribute('src');
+            img.src = baseUrl + currentSrc;
         }
-        img.style.marginBottom = "10px";
+
+        // Style forcé pour le rendu
+        img.style.maxWidth = "100%";
+        img.style.height = "auto";
+        
+        if (img.closest('.block-float')) {
+            img.style.maxWidth = "200px";
+            img.style.display = "inline";
+            if (imgData[i] === 'left') {
+                img.style.float = "left";
+                img.style.marginRight = "20px";
+            } else if (imgData[i] === 'right') {
+                img.style.float = "right";
+                img.style.marginLeft = "20px";
+            }
+            img.style.marginBottom = "10px";
+        }
     });
 
     const styleContent = `
         body { margin: 0; padding: 0; background: #f4f4f4; }
         .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 40px; }
-        @media only screen and (max-width: 600px) {
-            .container { padding: 20px !important; width: 100% !important; box-sizing: border-box !important; }
-            .mobile-table, .mobile-table tbody, .mobile-table tr { display: block !important; width: 100% !important; }
-            .mobile-col { display: block !important; width: 100% !important; padding: 10px 0 !important; box-sizing: border-box !important; }
-            .mobile-img { display: block !important; float: none !important; margin: 0 auto 20px auto !important; max-width: 100% !important; width: 100% !important; height: auto !important; }
-        }
     `;
 
-    // 7. PRÉPARATION DU BOUTON
+    // 7. BOUTON AVEC COPIE "RICH TEXT"
     const buttonHTML = `
         <div id="copy-tool" style="text-align:center; margin-top:40px; padding:20px; border-top:1px solid #eee; font-family:Arial, sans-serif;">
-            <button onclick="
-                const range = document.createRange();
-                range.selectNode(document.getElementById('mail-content'));
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-                document.execCommand('copy');
-                this.innerText = '✅ Copié !';
-                this.style.background = '#34a853';
-            " style="background:#4285f4; color:white; border:none; padding:15px 30px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:16px;">
-                Copier pour Gmail
+            <button id="btn-exec-copy" style="background:#4285f4; color:white; border:none; padding:15px 30px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:16px;">
+                📋 Copier pour Gmail
             </button>
         </div>`;
 
-    // 8. OUVERTURE UNIQUE DU BLANK
+    // 8. OUVERTURE DU BLANK ET SCRIPT DE COPIE
     const win = window.open("", "_blank");
     if (win) {
         win.document.write(`
@@ -155,12 +121,35 @@ function exportForGmail() {
             <html>
             <head>
                 <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>${styleContent}</style>
             </head>
             <body>
                 <div class="container" id="mail-content">${temp.innerHTML}</div>
                 ${buttonHTML}
+                <script>
+                    document.getElementById('btn-exec-copy').addEventListener('click', async function() {
+                        const content = document.getElementById('mail-content');
+                        
+                        // Utilisation de l'API Clipboard pour garder le formattage HTML
+                        const type = "text/html";
+                        const blob = new Blob([content.innerHTML], { type });
+                        const data = [new ClipboardItem({ [type]: blob })];
+
+                        try {
+                            await navigator.clipboard.write(data);
+                            this.innerText = '✅ Contenu prêt !';
+                            this.style.background = '#34a853';
+                        } catch (err) {
+                            // Fallback à l'ancienne si le navigateur bloque
+                            const range = document.createRange();
+                            range.selectNode(content);
+                            window.getSelection().removeAllRanges();
+                            window.getSelection().addRange(range);
+                            document.execCommand('copy');
+                            this.innerText = '✅ Copié !';
+                        }
+                    });
+                <\/script>
             </body>
             </html>
         `);

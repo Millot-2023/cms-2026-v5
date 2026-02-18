@@ -66,27 +66,28 @@ function exportForGmail() {
 
 
 
-// 5. STRUCTURE DES COLONNES (VERSION BLOCS FLUIDES)
+// 5. STRUCTURE DES COLONNES (STRATÉGIE DE SURVIE GMAIL)
     temp.querySelectorAll('.grid-wrapper').forEach(grid => {
         const cols = grid.querySelectorAll('.col-item');
         if (cols.length === 0) return;
 
-        let blocksHTML = '';
+        // Pour Gmail, on oublie le côte-à-côte si le responsive ne suit pas.
+        // On transforme chaque colonne en une TABLE de 100% de large.
+        // Elles seront l'une sous l'autre par défaut, ce qui est propre partout.
+        let finalHTML = '';
         
         cols.forEach(col => {
-            // On utilise des div inline-block avec un min-width
-            // Si l'écran est plus petit que 250px, le bloc suivant saute à la ligne
-            blocksHTML += `
-                <div style="display: inline-block; width: 250px; min-width: 240px; vertical-align: top; margin-bottom: 20px; text-align: left;">
-                    <div style="padding: 0 15px; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif; line-height: 1.6;">
-                        ${col.innerHTML}
-                    </div>
-                </div>`;
+            finalHTML += `
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:20px; border-collapse:collapse;">
+                    <tr>
+                        <td style="padding:10px; text-align:left; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif; line-height: 1.6;">
+                            ${col.innerHTML}
+                        </td>
+                    </tr>
+                </table>`;
         });
         
-        // Le text-align: center sur le parent aide à équilibrer sur mobile
-        grid.innerHTML = `<div style="width: 100%; text-align: center; font-size: 0;">${blocksHTML}</div>`;
-        grid.style.marginBottom = "20px";
+        grid.innerHTML = finalHTML;
     });
 
 

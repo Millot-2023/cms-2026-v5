@@ -53,60 +53,28 @@ function exportForGmail() {
         el.style.display = "block";
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 5. STRUCTURE DES COLONNES (VERSION BLOCS FLUIDES)
+    // 5. STRUCTURE DES COLONNES (RESPONSIVE FORCÉ)
     temp.querySelectorAll('.grid-wrapper').forEach(grid => {
         const cols = grid.querySelectorAll('.col-item');
         if (cols.length === 0) return;
+        const widthPerCol = (100 / cols.length).toFixed(2);
 
-        let blocksHTML = '';
-        
+        // Ajout de la classe mobile-table pour le CSS
+        let tableHTML = `<table class="mobile-table" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;"><tr>`;
         cols.forEach(col => {
-            // On utilise des div inline-block avec un min-width
-            // Si l'écran est plus petit que 250px, le bloc suivant saute à la ligne
-            blocksHTML += `
-                <div style="display: inline-block; width: 250px; min-width: 240px; vertical-align: top; margin-bottom: 20px; text-align: left;">
-                    <div style="padding: 0 15px; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif; line-height: 1.6;">
-                        ${col.innerHTML}
-                    </div>
-                </div>`;
+            tableHTML += `
+                <td class="mobile-col" width="${widthPerCol}%" valign="top" style="width:${widthPerCol}%; padding:0 15px; vertical-align:top; text-align:left; line-height: 1.6; font-size: ${defaultPSize}; color: #333333; font-family: Arial, sans-serif;">
+                    ${col.innerHTML}
+                </td>`;
         });
-        
-        // Le text-align: center sur le parent aide à équilibrer sur mobile
-        grid.innerHTML = `<div style="width: 100%; text-align: center; font-size: 0;">${blocksHTML}</div>`;
+        tableHTML += `</tr></table>`;
+        grid.innerHTML = tableHTML;
         grid.style.marginBottom = "20px";
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // 6. FLOAT DES IMAGES (RESPONSIVE FORCÉ)
     temp.querySelectorAll('.block-float img').forEach((img, i) => {
-        img.className = "mobile-img";
+        img.className = "mobile-img"; // Classe pour le responsive
         img.style.maxWidth = "200px"; 
         img.style.height = "auto";
         img.style.display = "inline";
@@ -131,23 +99,6 @@ function exportForGmail() {
         }
     `;
 
-    // 7. PRÉPARATION DU BOUTON
-    const buttonHTML = `
-        <div id="copy-tool" style="text-align:center; margin-top:40px; padding:20px; border-top:1px solid #eee; font-family:Arial, sans-serif;">
-            <button onclick="
-                const range = document.createRange();
-                range.selectNode(document.getElementById('mail-content'));
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-                document.execCommand('copy');
-                this.innerText = '✅ Copié !';
-                this.style.background = '#34a853';
-            " style="background:#4285f4; color:white; border:none; padding:15px 30px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:16px;">
-                Copier pour Gmail
-            </button>
-        </div>`;
-
-    // 8. OUVERTURE UNIQUE DU BLANK
     const win = window.open("", "_blank");
     if (win) {
         win.document.write(`
@@ -159,11 +110,22 @@ function exportForGmail() {
                 <style>${styleContent}</style>
             </head>
             <body>
-                <div class="container" id="mail-content">${temp.innerHTML}</div>
-                ${buttonHTML}
+                <div class="container">${temp.innerHTML}</div>
             </body>
             </html>
         `);
         win.document.close();
     }
+
+
+
+
+
+
+
+
+    
+
+
+    
 }
