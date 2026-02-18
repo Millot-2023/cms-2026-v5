@@ -63,7 +63,7 @@ $designSystemArray = [
     'h3' => [ 'fontSize' => '30px' ], 
     'h4' => [ 'fontSize' => '24px' ], 
     'h5' => [ 'fontSize' => '18px' ], 
-    'p' =>  [ 'fontSize' => '18px' ] 
+    'p' =>  [ 'fontSize' => '16px' ] 
 ];
 
 // --- CHARGEMENT HYBRIDE ---
@@ -79,13 +79,17 @@ $data_path = $current_project_dir . 'data.php';
 if (file_exists($data_path)) {
     $data_loaded = include $data_path;
     
-    if (is_array($data_loaded)) {
+if (is_array($data_loaded)) {
         $title = $data_loaded['title'] ?? $title;
         $category = $data_loaded['category'] ?? $category;
         $summary = $data_loaded['summary'] ?? $summary;
         $cover = $data_loaded['cover'] ?? $cover;
         $date = $data_loaded['date'] ?? $date;
         $htmlContent = $data_loaded['htmlContent'] ?? $htmlContent;
+        
+        // --- CORRECTIF CHEMIN IMAGES POUR L'ÉDITEUR ---
+        $htmlContent = str_replace('src="content/', 'src="../content/', $htmlContent);
+        
         $designSystemArray = $data_loaded['designSystem'] ?? $designSystemArray;
     }
 }
@@ -142,9 +146,17 @@ if (!empty($cover)) {
 
 
             <span class="section-label">MÉTADONNÉES</span>
-            <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
-            <input type="text" id="inp-date" class="admin-input" value="<?php echo htmlspecialchars($date); ?>" readonly>
-            <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
+
+
+<input type="text" id="inp-title" class="admin-input" value="<?php echo htmlspecialchars($title); ?>" placeholder="Titre du projet">
+<input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
+<input type="text" id="inp-date" class="admin-input" value="<?php echo htmlspecialchars($date); ?>" readonly>
+<textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
+
+
+
+
+
 
             <span class="section-label">TYPOGRAPHIE</span>
             <div class="row-h">
@@ -164,23 +176,20 @@ if (!empty($cover)) {
                 </div>
             </div>
 
-            <span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
-            <div class="gauge-row">
-                <div class="gauge-info"><span>TAILLE POLICE</span><span id="val-size">64</span>px</div>
-                <input type="range" id="slider-size" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
-            </div>
+<span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
 
 
-
-
-
-
-
-
-
-
-
-
+<div class="gauge-row">
+    <div class="gauge-info">
+    <span>TAILLE POLICE</span>
+    <span id="val-size">16</span>px</div>
+    <input type="range" 
+       id="slider-size" 
+       min="8" 
+       max="120" 
+       value="16" 
+       oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
+</div>
 
 
 
@@ -196,7 +205,7 @@ if (!empty($cover)) {
                     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="2" fill="currentColor"/><rect width="9" y="4" height="2" fill="currentColor"/><rect y="8" width="20" height="2" fill="currentColor"/><rect y="12" width="20" height="2" fill="currentColor"/><rect x="11" width="9" height="6" fill="currentColor" stroke="black" stroke-width="1"/></svg>
                 </button>
             </div>
-            <div class="row-float" style="margin-top:5px;">
+            <!--<div class="row-float" style="margin-top:5px;">
                 <button class="tool-btn" onclick="addFloatBlock('bottom-left')" title="Aligner en bas à gauche">
                     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="20" height="2" fill="currentColor"/><rect y="4" width="20" height="2" fill="currentColor"/><rect x="11" y="8" width="9" height="2" fill="currentColor"/><rect x="11" y="12" width="9" height="2" fill="currentColor"/><rect width="9" height="6" y="8" fill="currentColor" stroke="black" stroke-width="1"/></svg>
                 </button>
@@ -206,7 +215,7 @@ if (!empty($cover)) {
                 <button class="tool-btn" onclick="addFloatBlock('bottom-right')" title="Aligner en bas à droite">
                     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="2" fill="currentColor"/><rect width="9" y="4" height="2" fill="currentColor"/><rect y="8" width="20" height="2" fill="currentColor"/><rect y="12" width="20" height="2" fill="currentColor"/><rect x="11" y="8" width="9" height="6" fill="currentColor" stroke="black" stroke-width="1"/></svg>
                 </button>
-            </div>
+            </div>-->
 
 
 
@@ -285,26 +294,101 @@ if (!empty($cover)) {
     var designSystem = <?php echo json_encode($designSystemArray); ?>;
     var LOREM_TEXT = "Le design system n'est pas seulement une collection de composants, c'est l'ossature de votre projet web. En utilisant des blocs structurés, vous assurez une cohérence visuelle sur tous les écrans, du mobile au desktop. Ce texte permet de tester la lisibilité, l'espacement des lignes et l'impact des lettrines sur vos paragraphes. Un bon éditeur doit permettre de manipuler ces éléments avec fluidité pour obtenir un rendu professionnel et équilibré à chaque publication.";
 
-    function renderStyles() {
-        var dynStyle = document.getElementById('dynamic-styles');
-        if(!dynStyle) return;
-        var css = ".paper { padding-top: 40px; }\n"; 
-        css += ".has-lettrine::first-letter {float: left; font-size: 3.5rem; margin-right: 12px; font-weight: 900; display: block; padding: 4px; font-family: serif; }\n";
-        for (var tag in designSystem) {
-            css += ".paper " + tag + " { font-size: " + designSystem[tag].fontSize + "; margin-bottom: 1.5em; }\n";
+
+
+
+function renderStyles() {
+    var dynStyle = document.getElementById('dynamic-styles');
+    if(!dynStyle) return;
+    
+    var gap = "20px"; 
+    var css = ".paper { padding-top: 40px; }\n"; 
+    
+    // --- L'ENVELOPPE ÉDITEUR ---
+    css += ".block-container { clear: both; margin-bottom: 0px !important; padding: 0; position: relative; }\n"; 
+    
+    // --- LE BLOC FLOAT (Image + Texte) ---
+    css += ".block-float { display: flow-root; margin-bottom: " + gap + " !important; }\n"; 
+    css += ".block-float p { margin: 0 !important; padding: 0 !important; }\n";
+    
+    // --- LES GRILLES ---
+    css += ".grid-wrapper { display: grid; margin-bottom: " + gap + " !important; }\n";
+    css += ".col-item { margin: 0 !important; }\n";
+
+    // --- TA LETTRINE ---
+    css += ".has-lettrine::first-letter { " +
+           "float: left; " +
+           "font-size: 3.5rem !important; " + 
+           "margin-top: 4px; " + 
+           "margin-right: 10px !important;" + 
+           "margin-bottom: 2px; " +           
+           "font-weight: 900; " + 
+           "display: block; " + 
+           "font-family: serif; " +
+           "}\n";
+
+    // --- BOUCLE DESIGN SYSTEM ---
+    for (var tag in designSystem) {
+        if (tag === 'p') {
+            css += ".paper p, .col-item, .block-float p { font-size: " + designSystem[tag].fontSize + " !important; }\n";
+        } else {
+            css += ".paper " + tag + " { font-size: " + designSystem[tag].fontSize + " !important; margin-bottom: " + gap + " !important; margin-top: 0; }\n";
         }
-        dynStyle.innerHTML = css;
+    }
+    dynStyle.innerHTML = css;
+}
+
+
+
+
+/* GESTION DU CLIC : Définition de la cible et mise à jour des réglettes du cockpit */
+function setTarget(tag, el) {
+    currentTag = tag;
+    
+    // Identification de l'élément pour la réglette Image/Gutter
+    currentImageElement = (tag === 'grid' || tag === 'img') ? el : null;
+    
+    // Identification de l'élément pour le texte (Lettrine, Justification)
+    currentTargetElement = (el && (el.getAttribute('contenteditable') === 'true' || el.classList.contains('col-item'))) ? el : (el.querySelector ? el.querySelector('p') : null);
+    
+    // Mise à jour de l'étiquette dans le cockpit (H1, P, etc.)
+    var label = document.getElementById('target-label');
+    if(label) label.innerText = tag.toUpperCase();
+
+    // SYNCHRONISATION DU SLIDER : On cale la réglette sur la valeur réelle du tag cliqué
+    if (designSystem[tag] && designSystem[tag].fontSize) {
+        var size = designSystem[tag].fontSize.replace('px', '');
+        var slider = document.getElementById('slider-size');
+        var valDisplay = document.getElementById('val-size');
+        
+        if (slider) slider.value = size;
+        if (valDisplay) valDisplay.innerText = size;
     }
 
-    function setTarget(tag, el) {
-        currentTag = tag;
-        currentImageElement = (tag === 'grid' || tag === 'img') ? el : null;
-        currentTargetElement = (el && (el.getAttribute('contenteditable') === 'true' || el.classList.contains('col-item'))) ? el : (el.querySelector ? el.querySelector('p') : null);
-        
-        var label = document.getElementById('target-label');
-        if(label) label.innerText = tag.toUpperCase();
-        updateLettrineIcon(currentTargetElement);
-    }
+    updateLettrineIcon(currentTargetElement);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     function toggleLettrine() {
         if (currentTargetElement) {
@@ -383,35 +467,42 @@ function handleCoverChange(input) {
 
 
 
-    function publishProject() {
-        const btn = document.getElementById('btn-publish-trigger');
-        const originalText = btn.innerText;
-        btn.innerText = "PUBLICATION...";
-        btn.disabled = true;
+function publishProject() {
+    const btn = document.getElementById('btn-publish-trigger');
+    const originalText = btn.innerText;
+    btn.innerText = "PUBLICATION...";
+    btn.disabled = true;
 
-        // NETTOYAGE DU HTML : On retire les "../" des src des images pour la sauvegarde
-        let cleanHtml = document.getElementById('editor-core').innerHTML;
-        cleanHtml = cleanHtml.replace(/src="\.\.\//g, 'src="');
+    // 1. NETTOYAGE DU HTML : Crucial pour que les images s'affichent partout
+    let cleanHtml = document.getElementById('editor-core').innerHTML;
+    cleanHtml = cleanHtml.replace(/src="\.\.\//g, 'src="');
 
-        var formData = new FormData();
-        formData.append('slug', document.getElementById('inp-slug').value);
-        formData.append('htmlContent', cleanHtml); // On envoie le HTML propre
-        formData.append('designSystem', JSON.stringify(designSystem));
-        formData.append('summary', document.getElementById('inp-summary').value);
-        formData.append('cover', coverData); 
-        formData.append('title', "<?php echo addslashes($title); ?>");
-        formData.append('category', "<?php echo addslashes($category); ?>");
+    var formData = new FormData();
+    formData.append('slug', document.getElementById('inp-slug').value);
+    formData.append('htmlContent', cleanHtml); 
+    formData.append('designSystem', JSON.stringify(designSystem));
+    formData.append('summary', document.getElementById('inp-summary').value);
+    formData.append('cover', coverData);
 
-        fetch('save.php', { method: 'POST', body: formData })
-        .then(r => r.json())
-        .then(d => {
-            alert(d.status === 'success' ? "✅ " + d.message : "❌ " + d.message);
-        })
-        .finally(() => {
-            btn.innerText = originalText;
-            btn.disabled = false;
-        });
-    }
+formData.append('title', document.getElementById('inp-title').value);
+
+    formData.append('category', "<?php echo addslashes($category); ?>");
+
+    fetch('save.php', { method: 'POST', body: formData })
+    .then(r => r.json())
+    .then(d => {
+        alert(d.status === 'success' ? "✅ " + d.message : "❌ " + d.message);
+    })
+    .catch(err => {
+        alert("❌ Erreur critique de communication.");
+        console.error(err);
+    })
+    .finally(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    });
+
+}
 
 
 
@@ -456,7 +547,31 @@ function addFloatBlock(type) {
         }
     }
 
-    function updateImageWidth(val) { if(currentImageElement) { currentImageElement.style.width = val + '%'; document.getElementById('val-img-width').innerText = val; } }
+
+
+
+
+/* RÉGLAGE DE LA LARGEUR : Gère l'image seule ou l'image dans un bloc texte (Float) */
+function updateImageWidth(val) { 
+    if(currentImageElement) { 
+        // On cherche si on est dans un bloc avec texte (image-placeholder)
+        var imgHolder = currentImageElement.querySelector('.image-placeholder') || (currentImageElement.classList.contains('image-placeholder') ? currentImageElement : null);
+        
+        if(imgHolder) {
+            // Si c'est un bloc float, on ne réduit que la zone image
+            imgHolder.style.setProperty('width', val + '%', 'important');
+        } else {
+            // Sinon on réduit le conteneur complet
+            currentImageElement.style.setProperty('width', val + '%', 'important');
+        }
+        
+        document.getElementById('val-img-width').innerText = val; 
+    } 
+}
+    
+    
+    
+    
     function updateGutter(val) { 
         let grid = currentImageElement ? currentImageElement.closest('.grid-wrapper') : null;
         if(grid) { grid.style.gap = val + 'px'; document.getElementById('val-gutter').innerText = val; } 
@@ -472,50 +587,26 @@ function addFloatBlock(type) {
 
 
 
-function publishProject() {
-        const btn = document.getElementById('btn-publish-trigger');
-        const originalText = btn.innerText;
-        
-        // État visuel pendant le chargement
-        btn.innerText = "PUBLICATION...";
-        btn.disabled = true;
-
-        var formData = new FormData();
-        formData.append('slug', document.getElementById('inp-slug').value);
-        formData.append('htmlContent', document.getElementById('editor-core').innerHTML);
-        formData.append('designSystem', JSON.stringify(designSystem));
-        formData.append('summary', document.getElementById('inp-summary').value);
-        formData.append('cover', coverData); 
-        formData.append('title', "<?php echo addslashes($title); ?>");
-        formData.append('category', "<?php echo addslashes($category); ?>");
-
-        fetch('save.php', { method: 'POST', body: formData })
-        .then(r => r.json())
-        .then(d => {
-            if(d.status === 'success') {
-                alert("✅ " + d.message);
-            } else {
-                alert("❌ Erreur : " + d.message);
-            }
-        })
-        .catch(err => {
-            alert("❌ Erreur critique de communication.");
-            console.error(err);
-        })
-        .finally(() => {
-            // Rétablissement du bouton
-            btn.innerText = originalText;
-            btn.disabled = false;
-        });
-    }
 
 
 
 
 
+/* INITIALISATION : Paramètre l'interface par défaut au chargement de la page */
+function initEditor() {
+    // 1. On lance le rendu des styles CSS
+    renderStyles();
 
+    // 2. On cale l'interface sur le paragraphe (P) par défaut
+    var defaultSize = designSystem['p'].fontSize.replace('px', '');
+    document.getElementById('target-label').innerText = "P";
+    document.getElementById('slider-size').value = defaultSize;
+    document.getElementById('val-size').innerText = defaultSize;
+}
 
-    window.onload = renderStyles;
+// On demande au navigateur de lancer cette fonction au démarrage
+window.onload = initEditor;
+
     </script>
 
 
