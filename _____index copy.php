@@ -1,7 +1,8 @@
 <?php
 /**
  * PROJET-CMS-2026 - ARCHITECTURE NETTOYÉE
- * Focus : Tri naturel des dossiers indexés
+ * Focus : Correction structurelle et restauration des accès (Version Stabilisée)
+ * @author: Christophe Millot
  */
 require_once 'core/config.php';
 require_once 'includes/header.php'; 
@@ -39,9 +40,8 @@ require_once 'includes/hero.php';
             <?php
             $content_path = 'content/';
             if (is_dir($content_path)) {
-                // TRI : On récupère les dossiers et on les trie par ordre naturel (01, 02, 10...)
+                // On liste les dossiers du premier niveau uniquement
                 $folders = array_diff(scandir($content_path), array('..', '.', '_trash'));
-                natsort($folders); // <--- AJOUT CRUCIAL pour respecter l'ordre numérique
                 
                 foreach ($folders as $folder) {
                     $project_dir = $content_path . $folder;
@@ -49,12 +49,14 @@ require_once 'includes/hero.php';
 
                     $data_file = $project_dir . '/data.php';
                     
+                    // Initialisation des données par défaut (si data.php est absent)
                     $title = $folder;
                     $category = "PROJET";
                     $date = date("d.m.Y", filemtime($project_dir));
                     $cover = "";
                     $summary = "Dossier de projet : " . $folder;
 
+                    // On charge data.php seulement s'il existe
                     if (file_exists($data_file)) {
                         $data_loaded = include $data_file;
                         if (is_array($data_loaded)) {
@@ -68,6 +70,7 @@ require_once 'includes/hero.php';
                         }
                     }
 
+                    // GESTION DE L'IMAGE
                     $image_src = ASSETS_URL . "img/image-template.png";
                     if (!empty($cover)) {
                         if (strpos($cover, 'data:image') === 0) {

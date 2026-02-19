@@ -1,6 +1,6 @@
 <?php
 /**
- * PROJET-CMS-2026 - MOTEUR DE SAUVEGARDE V4 (Modifiée pour Upload Physique + Réordonnancement)
+ * PROJET-CMS-2026 - MOTEUR DE SAUVEGARDE V4 (Modifiée pour Upload Physique)
  */
 
 header('Content-Type: application/json');
@@ -14,38 +14,7 @@ if (!$is_local) {
 }
 
 // ---------------------------------------------------------
-// ACTION : RÉORDONNANCER LES PAGES (DRAG & DROP)
-// ---------------------------------------------------------
-if (isset($_POST['action']) && $_POST['action'] === 'reorder_pages' && isset($_POST['order'])) {
-    $order = json_decode($_POST['order'], true);
-    $content_dir = "../content/";
-    $results = [];
-
-    foreach ($order as $index => $old_slug) {
-        // 1. On nettoie l'ancien slug de ses éventuels préfixes numériques (ex: "01-projet" -> "projet")
-        $clean_name = preg_replace('/^\d+-/', '', $old_slug);
-        
-        // 2. On crée le nouveau nom avec le nouvel index (format 01, 02, 03...)
-        $new_index = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
-        $new_slug = $new_index . "-" . $clean_name;
-
-        $old_path = $content_dir . $old_slug;
-        $new_path = $content_dir . $new_slug;
-
-        // 3. Renommage physique du dossier
-        if (file_exists($old_path) && $old_path !== $new_path) {
-            if (rename($old_path, $new_path)) {
-                $results[] = "$old_slug -> $new_slug";
-            }
-        }
-    }
-
-    echo json_encode(["status" => "success", "updates" => $results]);
-    exit;
-}
-
-// ---------------------------------------------------------
-// ACTION : UPLOAD D'IMAGE PHYSIQUE
+// AJOUT : Traitement de l'upload d'image physique (Standard $_FILES)
 // ---------------------------------------------------------
 if (isset($_POST['action']) && $_POST['action'] === 'upload_image' && isset($_FILES['image'])) {
     $slug = $_POST['slug'] ?? '';
@@ -60,17 +29,16 @@ if (isset($_POST['action']) && $_POST['action'] === 'upload_image' && isset($_FI
     $target = $dir . "/" . $fileName;
 
     if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+        // On retourne l'URL relative pour l'affichage dans l'éditeur
         echo json_encode(["success" => true, "url" => "content/" . $slug . "/" . $fileName, "fileName" => $fileName]);
     } else {
         echo json_encode(["success" => false, "message" => "Erreur lors du déplacement du fichier."]);
     }
     exit; 
 }
-
-// ---------------------------------------------------------
-// ACTION : SAUVEGARDE DE PROJET (PUBLICATION)
 // ---------------------------------------------------------
 
+// 1. Récupération des données
 $data = $_POST;
 $slug = $data['slug'] ?? '';
 
@@ -79,6 +47,7 @@ if (empty($slug)) {
     exit;
 }
 
+// On garde le slug exact envoyé par l'éditeur (qui correspond au nom du dossier)
 $dir = "../content/" . $slug;
 
 if (!file_exists($dir)) { 
@@ -87,16 +56,19 @@ if (!file_exists($dir)) {
 
 $file_path = $dir . "/data.php";
 
+// 2. Récupération des données existantes
 $existingData = [];
 if (file_exists($file_path)) {
     $loaded = @include $file_path;
     if (is_array($loaded)) { $existingData = $loaded; }
 }
 
+// 3. Traitement du Design System (On garde l'existant si vide)
 $ds = $data['designSystem'] ?? [];
 if(is_string($ds)) { $ds = json_decode($ds, true); }
 if(empty($ds)) { $ds = $existingData['designSystem'] ?? []; }
 
+// 4. Gestion de la cover (Rétro-compatibilité Base64 conservée)
 $coverValue = $data['cover'] ?? ($existingData['cover'] ?? '');
 
 if (strpos($coverValue, 'data:image') === 0) {
@@ -109,17 +81,19 @@ if (strpos($coverValue, 'data:image') === 0) {
     $coverValue = $fileName;
 }
 
+// 5. Préparation du tableau final
 $finalData = [
-    'title'         => $data['title'] ?? ($existingData['title'] ?? 'Sans titre'),
-    'cover'         => $coverValue,
-    'category'      => $data['category'] ?? ($existingData['category'] ?? 'Design'),
-    'date'          => $existingData['date'] ?? date('d.m.Y'),
-    'updated'       => date('Y-m-d H:i:s'),
-    'summary'       => $data['summary'] ?? ($existingData['summary'] ?? ''),
-    'designSystem'  => $ds,
-    'htmlContent'   => $data['htmlContent'] ?? ''
+    'title'        => $data['title'] ?? ($existingData['title'] ?? 'Sans titre'),
+    'cover'        => $coverValue,
+    'category'     => $data['category'] ?? ($existingData['category'] ?? 'Design'),
+    'date'         => $existingData['date'] ?? date('d.m.Y'),
+    'updated'      => date('Y-m-d H:i:s'),
+    'summary'      => $data['summary'] ?? ($existingData['summary'] ?? ''),
+    'designSystem' => $ds,
+    'htmlContent'  => $data['htmlContent'] ?? ''
 ];
 
+// 6. Écriture du fichier
 $content_file = "<?php\n/** Fichier généré par Studio CMS - " . date('d.m.Y H:i') . " **/\n";
 $content_file .= "return " . var_export($finalData, true) . ";\n";
 $content_file .= "?>";

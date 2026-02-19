@@ -109,51 +109,54 @@ if (!empty($cover)) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap">
     <style id="dynamic-styles"></style>
     <link rel="stylesheet" href="../assets/css/main.css">
-    <style>
-        /* Styles pour les onglets v6 */
-        .sidebar-tabs { display: flex; background: #1a1a1a; border-bottom: 1px solid #333; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; color: #666; cursor: pointer; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
-        .tab-btn.active { color: #fff; border-bottom: 2px solid #ff4d4d; background: #222; }
-        .sidebar-scroll { height: calc(100vh - 180px); overflow-y: auto; padding: 15px; }
-    </style>
 </head>
 <body class="dark-mode"> 
     <button class="sidebar-trigger" onclick="toggleSidebar()">☰</button>
 
-    <aside class="sidebar" style="display: flex; flex-direction: column;">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <span style="color:#ff4d4d; cursor:pointer; font-weight:bold;" onclick="toggleSidebar()">✕</span>
             <h2><?php echo SITE_NAME; ?></h2>
             <div class="theme-toggle" onclick="toggleTheme()" id="t-icon" style="cursor:pointer">🌙</div>
         </div>
 
-        <div class="sidebar-tabs">
-            <button id="btn-tab-tools" onclick="switchTab('tools')" class="tab-btn active">COCKPIT</button>
-            <button id="btn-tab-pages" onclick="switchTab('pages')" class="tab-btn">PAGES</button>
-        </div>
-
-        <div id="tab-tools" class="sidebar-scroll">
+        <div class="sidebar-scroll">
             <span class="section-label">APERÇU CARTE</span>
-            <div class="preview-card-container" id="preview-container" style="width:100%; aspect-ratio:1/1; background:#222; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="<?php echo $cover_path; ?>" 
-                     id="img-cover-preview" 
-                     class="<?php echo ($is_in_trash ? 'img-trash' : ''); ?>"
-                     style="width:100%; height:100%; object-fit:cover;"
-                     onerror="this.src='<?php echo ASSETS_URL; ?>img/image-template.png';">
-            </div>
 
-            <button class="tool-btn" style="height:30px; font-size:9px;" 
-                    onclick="setTarget('img', document.getElementById('preview-container')); document.getElementById('inp-block-img').click();">
-                Changer l'image
-            </button>
 
-            <input type="file" id="inp-block-img" style="display:none;" onchange="handleCoverChange(this)">
+
+
+
+<div class="preview-card-container" id="preview-container" style="width:100%; aspect-ratio:1/1; background:#222; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+    <img src="<?php echo $cover_path; ?>" 
+         id="img-cover-preview" 
+         class="<?php echo ($is_in_trash ? 'img-trash' : ''); ?>"
+         style="width:100%; height:100%; object-fit:cover;"
+         onerror="this.src='<?php echo ASSETS_URL; ?>img/image-template.png';">
+</div>
+
+<button class="tool-btn" style="height:30px; font-size:9px;" 
+        onclick="setTarget('img', document.getElementById('preview-container')); document.getElementById('inp-block-img').click();">
+    Changer l'image
+</button>
+
+<input type="file" id="inp-block-img" style="display:none;" onchange="handleCoverChange(this)">
+
+
+
 
             <span class="section-label">MÉTADONNÉES</span>
-            <input type="text" id="inp-title" class="admin-input" value="<?php echo htmlspecialchars($title); ?>" placeholder="Titre du projet">
-            <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
-            <input type="text" id="inp-date" class="admin-input" value="<?php echo htmlspecialchars($date); ?>" readonly>
-            <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
+
+
+<input type="text" id="inp-title" class="admin-input" value="<?php echo htmlspecialchars($title); ?>" placeholder="Titre du projet">
+<input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
+<input type="text" id="inp-date" class="admin-input" value="<?php echo htmlspecialchars($date); ?>" readonly>
+<textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
+
+
+
+
+
 
             <span class="section-label">TYPOGRAPHIE</span>
             <div class="row-h">
@@ -173,18 +176,22 @@ if (!empty($cover)) {
                 </div>
             </div>
 
-            <span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
-            <div class="gauge-row">
-                <div class="gauge-info">
-                <span>TAILLE POLICE</span>
-                <span id="val-size">16</span>px</div>
-                <input type="range" 
-                   id="slider-size" 
-                   min="8" 
-                   max="120" 
-                   value="16" 
-                   oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
-            </div>
+<span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
+
+
+<div class="gauge-row">
+    <div class="gauge-info">
+    <span>TAILLE POLICE</span>
+    <span id="val-size">16</span>px</div>
+    <input type="range" 
+       id="slider-size" 
+       min="8" 
+       max="120" 
+       value="16" 
+       oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
+</div>
+
+
 
             <span class="section-label">DISPOSITION (FLOAT)</span>
             <div class="row-float">
@@ -198,6 +205,35 @@ if (!empty($cover)) {
                     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="2" fill="currentColor"/><rect width="9" y="4" height="2" fill="currentColor"/><rect y="8" width="20" height="2" fill="currentColor"/><rect y="12" width="20" height="2" fill="currentColor"/><rect x="11" width="9" height="6" fill="currentColor" stroke="black" stroke-width="1"/></svg>
                 </button>
             </div>
+            <!--<div class="row-float" style="margin-top:5px;">
+                <button class="tool-btn" onclick="addFloatBlock('bottom-left')" title="Aligner en bas à gauche">
+                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="20" height="2" fill="currentColor"/><rect y="4" width="20" height="2" fill="currentColor"/><rect x="11" y="8" width="9" height="2" fill="currentColor"/><rect x="11" y="12" width="9" height="2" fill="currentColor"/><rect width="9" height="6" y="8" fill="currentColor" stroke="black" stroke-width="1"/></svg>
+                </button>
+                <button class="tool-btn" onclick="addFloatBlock('bottom-full')" title="Pleine largeur en bas">
+                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="20" height="2" fill="currentColor"/><rect y="4" width="20" height="2" fill="currentColor"/><rect y="8" width="20" height="6" fill="currentColor"/></svg>
+                </button>
+                <button class="tool-btn" onclick="addFloatBlock('bottom-right')" title="Aligner en bas à droite">
+                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="2" fill="currentColor"/><rect width="9" y="4" height="2" fill="currentColor"/><rect y="8" width="20" height="2" fill="currentColor"/><rect y="12" width="20" height="2" fill="currentColor"/><rect x="11" y="8" width="9" height="6" fill="currentColor" stroke="black" stroke-width="1"/></svg>
+                </button>
+            </div>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <span class="section-label">JUSTIFICATION TEXTE</span>
             <div class="row-justify" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
@@ -229,49 +265,6 @@ if (!empty($cover)) {
             </div>
         </div>
 
-
-
-
-
-
-        <!--<div id="tab-pages" class="sidebar-scroll" style="display:none;">
-            <span class="section-label">STRUCTURE DU SITE</span>
-            <div id="pages-list-container">
-                <p style="font-size:10px; color:#666; padding:10px;">Le gestionnaire de pages sera injecté ici.</p>
-            </div>
-        </div>-->
-
-
-<div id="tab-pages" class="sidebar-scroll" style="display:none;">
-    <span class="section-label">STRUCTURE DU SITE</span>
-    <div id="pages-list-container" class="pages-list">
-        <?php
-            // Scan du dossier content
-            $items = scandir($content_dir);
-            foreach ($items as $item) {
-                if ($item !== '.' && $item !== '..' && $item !== '_trash' && is_dir($content_dir . $item)) {
-                    echo '<div class="page-item" data-slug="'.$item.'">
-                            <span class="drag-handle">☰</span>
-                            <span class="page-title">'.$item.'</span>
-                          </div>';
-                }
-            }
-        ?>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="sidebar-footer">
             <button onclick="exportForGmail()" class="btn-gmail">✉️ EXPORT GMAIL</button>
             <button id="btn-publish-trigger" onclick="publishProject()" class="btn-publish">PUBLIER</button>
@@ -301,14 +294,8 @@ if (!empty($cover)) {
     var designSystem = <?php echo json_encode($designSystemArray); ?>;
     var LOREM_TEXT = "Le design system n'est pas seulement une collection de composants, c'est l'ossature de votre projet web. En utilisant des blocs structurés, vous assurez une cohérence visuelle sur tous les écrans, du mobile au desktop. Ce texte permet de tester la lisibilité, l'espacement des lignes et l'impact des lettrines sur vos paragraphes. Un bon éditeur doit permettre de manipuler ces éléments avec fluidité pour obtenir un rendu professionnel et équilibré à chaque publication.";
 
-    // LOGIQUE DE BASCULEMENT DES ONGLETS
-    function switchTab(tab) {
-        document.getElementById('tab-tools').style.display = (tab === 'tools') ? 'block' : 'none';
-        document.getElementById('tab-pages').style.display = (tab === 'pages') ? 'block' : 'none';
-        
-        document.getElementById('btn-tab-tools').classList.toggle('active', tab === 'tools');
-        document.getElementById('btn-tab-pages').classList.toggle('active', tab === 'pages');
-    }
+
+
 
 function renderStyles() {
     var dynStyle = document.getElementById('dynamic-styles');
@@ -330,15 +317,15 @@ function renderStyles() {
 
     // --- TA LETTRINE ---
     css += ".has-lettrine::first-letter { " +
-            "float: left; " +
-            "font-size: 3.5rem !important; " + 
-            "margin-top: 4px; " + 
-            "margin-right: 10px !important;" + 
-            "margin-bottom: 2px; " +           
-            "font-weight: 900; " + 
-            "display: block; " + 
-            "font-family: serif; " +
-            "}\n";
+           "float: left; " +
+           "font-size: 3.5rem !important; " + 
+           "margin-top: 4px; " + 
+           "margin-right: 10px !important;" + 
+           "margin-bottom: 2px; " +           
+           "font-weight: 900; " + 
+           "display: block; " + 
+           "font-family: serif; " +
+           "}\n";
 
     // --- BOUCLE DESIGN SYSTEM ---
     for (var tag in designSystem) {
@@ -350,6 +337,9 @@ function renderStyles() {
     }
     dynStyle.innerHTML = css;
 }
+
+
+
 
 /* GESTION DU CLIC : Définition de la cible et mise à jour des réglettes du cockpit */
 function setTarget(tag, el) {
@@ -377,6 +367,28 @@ function setTarget(tag, el) {
 
     updateLettrineIcon(currentTargetElement);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     function toggleLettrine() {
         if (currentTargetElement) {
@@ -414,6 +426,9 @@ function addGridBlock(num) {
     document.getElementById('editor-core').appendChild(container);
 }
 
+
+
+
     // --- CORRECTION : UPLOAD PHYSIQUE ---
 function handleCoverChange(input) {
     const file = input.files[0];
@@ -441,13 +456,16 @@ function handleCoverChange(input) {
                 }
             }
         }
-        input.value = ""; 
+        // --- LA CLÉ EST ICI ---
+        input.value = ""; // On vide l'input pour permettre de recliquer immédiatement
     })
     .catch(err => {
         console.error(err);
         input.value = ""; 
     });
 }
+
+
 
 function publishProject() {
     const btn = document.getElementById('btn-publish-trigger');
@@ -466,7 +484,8 @@ function publishProject() {
     formData.append('summary', document.getElementById('inp-summary').value);
     formData.append('cover', coverData);
 
-    formData.append('title', document.getElementById('inp-title').value);
+formData.append('title', document.getElementById('inp-title').value);
+
     formData.append('category', "<?php echo addslashes($category); ?>");
 
     fetch('save.php', { method: 'POST', body: formData })
@@ -482,7 +501,12 @@ function publishProject() {
         btn.innerText = originalText;
         btn.disabled = false;
     });
+
 }
+
+
+
+
 
 function addFloatBlock(type) {
     var container = document.createElement('div');
@@ -492,7 +516,7 @@ function addFloatBlock(type) {
         '<div class="delete-block" onclick="this.parentElement.remove()">✕</div>' +
         '<div class="block-float ' + type + '">' +
             '<div class="image-placeholder" ' +
-                'onclick="setTarget(\'img\', this)" ' + 
+                'onclick="setTarget(\'img\', this)" ' + // Garde le type 'img' pour ta logique actuelle
                 'ondblclick="document.getElementById(\'inp-block-img\').click();" ' + 
                 'style="background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">' +
                 'IMAGE' +
@@ -502,6 +526,12 @@ function addFloatBlock(type) {
     
     document.getElementById('editor-core').appendChild(container);
 }
+
+
+
+
+
+
 
     function resizePaper(width) {
         var paper = document.getElementById('paper');
@@ -517,19 +547,30 @@ function addFloatBlock(type) {
         }
     }
 
+
+
+
+
 /* RÉGLAGE DE LA LARGEUR : Gère l'image seule ou l'image dans un bloc texte (Float) */
 function updateImageWidth(val) { 
     if(currentImageElement) { 
+        // On cherche si on est dans un bloc avec texte (image-placeholder)
         var imgHolder = currentImageElement.querySelector('.image-placeholder') || (currentImageElement.classList.contains('image-placeholder') ? currentImageElement : null);
         
         if(imgHolder) {
+            // Si c'est un bloc float, on ne réduit que la zone image
             imgHolder.style.setProperty('width', val + '%', 'important');
         } else {
+            // Sinon on réduit le conteneur complet
             currentImageElement.style.setProperty('width', val + '%', 'important');
         }
+        
         document.getElementById('val-img-width').innerText = val; 
     } 
 }
+    
+    
+    
     
     function updateGutter(val) { 
         let grid = currentImageElement ? currentImageElement.closest('.grid-wrapper') : null;
@@ -541,238 +582,35 @@ function updateImageWidth(val) {
     function toggleSidebar() { document.body.classList.toggle('sidebar-hidden');}
     function toggleTheme() { document.body.classList.toggle('light-mode'); }
 
+
+
+
+
+
+
+
+
+
+
 /* INITIALISATION : Paramètre l'interface par défaut au chargement de la page */
 function initEditor() {
+    // 1. On lance le rendu des styles CSS
     renderStyles();
+
+    // 2. On cale l'interface sur le paragraphe (P) par défaut
     var defaultSize = designSystem['p'].fontSize.replace('px', '');
     document.getElementById('target-label').innerText = "P";
     document.getElementById('slider-size').value = defaultSize;
     document.getElementById('val-size').innerText = defaultSize;
 }
 
+// On demande au navigateur de lancer cette fonction au démarrage
 window.onload = initEditor;
 
+    </script>
 
-</script>
+
+
 <script src="../assets/js/export-gmail.js"></script>
-
-<!--CREATION DU CONTENU DE L'ONGLET ARBORESCENCE-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-    .page-item {
-        display: flex; align-items: center; background: #2a2a2a; margin-bottom: 5px;
-        padding: 8px; border-radius: 4px; border: 1px solid #333; cursor: pointer;
-        font-size: 11px; user-select: none;
-    }
-    
-    /* L'élément qui voyage dans la liste devient invisible pour laisser place à la mire */
-    .page-item.dragging { 
-        opacity: 0 !important;
-    }
-
-    .drag-handle { margin-right: 10px; color: #888; cursor: grab; padding: 0 5px; font-size: 14px; }
-    .page-title { flex-grow: 1; color: #eee; pointer-events: none; }
-    .page-item.active { border-left: 3px solid #ff4d4d; background: #333; }
-
-    /* LA MIRE (L'élément survolé) */
-    .page-item.drag-over { 
-        background: #000 !important;
-        border: 2px dashed #ffffff !important;
-        outline: none;
-    }
-
-    /* On estompe le contenu de la cible pour l'effet de vide */
-    .page-item.drag-over .page-title,
-    .page-item.drag-over .drag-handle {
-        opacity: 0.3;
-    }
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-let draggedItem = null;
-
-document.querySelectorAll('.page-item').forEach(item => {
-    
-    // NAVIGATION AU CLIC
-    item.addEventListener('click', function(e) {
-        if(e.target.classList.contains('drag-handle')) return; 
-        const slug = this.getAttribute('data-slug');
-        if(slug !== currentSlug) window.location.href = 'editor.php?project=' + slug;
-    });
-
-    if(item.getAttribute('data-slug') === currentSlug) item.classList.add('active');
-
-    // DRAG & DROP
-    item.setAttribute('draggable', true);
-
-
-
-
-    // --- ICI : ON ACTIVE LE CONTOUR BLANC AU SURVOL ---
-
- item.addEventListener('dragstart', function(e) {
-        draggedItem = this;
-        
-        // On attend que le navigateur crée l'image fantôme avant de marquer l'élément
-        setTimeout(() => {
-            this.classList.add('dragging');
-        }, 0);
-
-        e.dataTransfer.effectAllowed = 'move';
-    });
-
-    item.addEventListener('dragend', function() {
-        this.classList.remove('dragging');
-        draggedItem = null;
-        saveNewOrder();
-    });
-
-
-
-
-
-
-
-    // --- ICI : ON ÉTEINT LE CONTOUR BLANC QUAND ON PASSE ---
-    item.addEventListener('dragleave', function(e) {
-        this.classList.remove('drag-over');
-    });
-
-    item.addEventListener('dragend', function() {
-        this.classList.remove('dragging');
-        // NETTOYAGE GÉNÉRAL : On éteint tout
-        document.querySelectorAll('.page-item').forEach(i => i.classList.remove('drag-over'));
-        draggedItem = null;
-        saveNewOrder();
-    });
-
-
-
-
-
-item.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        if (this !== draggedItem) {
-            this.classList.add('drag-over');
-        }
-        
-        // Ta logique d'insertion (insertBefore) reste ici
-        const bounding = this.getBoundingClientRect();
-        const offset = e.clientY - bounding.top;
-        if (offset > bounding.height / 2) {
-            this.parentNode.insertBefore(draggedItem, this.nextSibling);
-        } else {
-            this.parentNode.insertBefore(draggedItem, this);
-        }
-    });
-
-    item.addEventListener('dragleave', function() {
-        this.classList.remove('drag-over');
-    });
-
-    item.addEventListener('drop', function() {
-        this.classList.remove('drag-over');
-    });
-
-
-});
-
-
-
-
-
-
-
-
-
-function saveNewOrder() {
-    const items = [...document.querySelectorAll('.page-item')];
-    const order = items.map(item => item.getAttribute('data-slug'));
-
-    const formData = new FormData();
-    formData.append('action', 'reorder_pages');
-    formData.append('order', JSON.stringify(order));
-
-    fetch('save.php', { method: 'POST', body: formData })
-    .then(r => r.json())
-    .then(d => { if(d.status === 'success') console.log("Ordre sauvé"); })
-    .catch(err => console.error("Erreur:", err));
-}
-
-
-
-
-
-// 3. FONCTION DE SAUVEGARDE DE L'ORDRE
-function saveNewOrder() {
-    const items = [...document.querySelectorAll('.page-item')];
-    const order = items.map(item => item.getAttribute('data-slug'));
-
-    const formData = new FormData();
-    formData.append('action', 'reorder_pages');
-    formData.append('order', JSON.stringify(order));
-
-    fetch('save.php', { method: 'POST', body: formData })
-    .then(r => r.json())
-    .then(d => { if(d.status === 'success') console.log("Ordre sauvé"); })
-    .catch(err => console.error("Erreur:", err));
-}
-</script>
-
-
-
-
 </body>
 </html>
